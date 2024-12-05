@@ -12,18 +12,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 DJANGO_ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", "local")
-ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = []
 INTERNAL_IPS = ["127.0.0.1"]
 
-# CORS
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://0.0.0.0:8000",
-]
+# 로컬 설정
+if DJANGO_ENVIRONMENT == "local":
+    ALLOWED_HOSTS = ["*"]
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ]
+
+# 서버 도메인 적용
+SERVER_DOMAIN = os.getenv("SERVER_DOMAIN")
+if SERVER_DOMAIN:
+    ALLOWED_HOSTS = [
+        SERVER_DOMAIN,
+    ]
+    CSRF_TRUSTED_ORIGINS = [
+        f"http://{SERVER_DOMAIN}",
+        f"https://{SERVER_DOMAIN}",
+    ]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
